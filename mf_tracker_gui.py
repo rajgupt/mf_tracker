@@ -1,9 +1,11 @@
-import mf_nav_ui
-import nav
 import exceptions
 from PySide.QtCore import *
 from PySide.QtGui import *
+
 import mf_tracker
+import nav
+import mf_nav_ui
+import mf_nav_gui
 
 TimeIntervalInYears = 1
 
@@ -17,7 +19,7 @@ class NAVWindow(QMainWindow, mf_nav_ui.Ui_MainWindow):
         self.navWidget = QWidget(self)
         self.verticalLayout.addWidget(self.navWidget)
         l = QVBoxLayout(self.navWidget)
-        self.navPlotCanvas = nav.NavCanvas(self.navWidget)
+        self.navPlotCanvas = mf_nav_gui.NavCanvas(self.navWidget)
         l.addWidget(self.navPlotCanvas)
         self.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"), self.mf_selected)
         self.connect(self.plotNavButton, SIGNAL("clicked()"), self.plotNavCallback)
@@ -31,4 +33,4 @@ class NAVWindow(QMainWindow, mf_nav_ui.Ui_MainWindow):
         qdateEnd = self.endDateEdit.date()
         dateStart = str(qdateStart.year())+"/"+str(qdateStart.month())+"/"+str(qdateStart.day())
         dateEnd = str(qdateEnd.year())+"/"+str(qdateEnd.month())+"/"+str(qdateEnd.day())
-        nav.plotNav(self.navPlotCanvas, self.comboBox.currentText(), dateStart, dateEnd)
+        mf_nav_gui.plotNav(self.navPlotCanvas, self.comboBox.currentText(), dateStart, dateEnd)
