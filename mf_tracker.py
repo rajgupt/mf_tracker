@@ -1,4 +1,4 @@
-# MF Tracker is used to track and monitor the MF portfolio
+﻿# MF Tracker is used to track and monitor the MF portfolio
 # This is an extension to the Value Research Approach Tailored 
 # to monitor in details
 
@@ -26,3 +26,20 @@
 
 # 7. Get the XIRR based on various filtered criteria like time duration, fund category etc
 
+import portfolio
+import sys
+import mf_tracker_ui
+import pandas as pd
+from PySide.QtGui import *
+from PySide.QtCore import *
+
+df_portfolio = pd.DataFrame()
+df_portfolio = portfolio.extractPortfolio()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = mf_tracker_ui.NAVWindow()
+    win.comboBox.addItems(sorted(list(set(df_portfolio["fundname"]))))
+
+    win.show()
+    app.exec_()

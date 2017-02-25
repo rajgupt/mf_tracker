@@ -1,10 +1,24 @@
 ﻿# getting the historical nav data from value research
+from __future__ import unicode_literals
 import sys
 import requests
 import pandas as pd
 import datetime
+import mf_tracker
 
-mf_df = pd.DataFrame()
+import os
+#import matplotlib.pyplot as plt
+#plt.style.use('ggplot')
+import matplotlib
+matplotlib.use('Qt4Agg')
+matplotlib.rcParams['backend.qt4'] = 'PySide'
+from matplotlib.backends import qt_compat
+from PySide.QtCore import *
+from PySide.QtGui import *
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+nav_df = pd.DataFrame()
 
 # Get the historical nav and benchmark value history for 3 years in form of data frame
 def getHistoryData(schemeCode):
@@ -14,27 +28,27 @@ def getHistoryData(schemeCode):
     '''
     url = "https://www.valueresearchonline.com/funds/fundVSindex.asp?Sch=" + schemeCode
 
-    # if mf_df.size != 0:
+    # if nav_df.size != 0:
     #     # data already present
-    #     return mf_df
+    #     return nav_df
 
     response = requests.get(url)
     nav_json = response.json()
 
-    mf_df = pd.DataFrame(nav_json[1][0]['data'])
+    nav_df = pd.DataFrame(nav_json[1][0]['data'])
     convert_date = lambda d: datetime.datetime.fromtimestamp(d/1000)
 
-    mf_df.columns = ['timestamp', 'nav']
-    mf_df.index = mf_df['timestamp'].map(convert_date)
-    mf_df = mf_df.drop('timestamp', axis=1)
+    nav_df.columns = ['timestamp', 'nav']
+    nav_df.index = nav_df['timestamp'].map(convert_date)
+    nav_df = nav_df.drop('timestamp', axis=1)
 
     bench_df = pd.DataFrame(nav_json[1][1]['data'])
     bench_df.columns = ['timestamp', 'nav']
     bench_df.index = bench_df['timestamp'].map(convert_date)
     bench_df = bench_df.drop('timestamp', axis=1)
 
-    mf_df['benchmark'] = bench_df['nav']
-    return mf_df
+    nav_df['benchmark'] = bench_df['nav']
+    return nav_df
 
 def getNavCompareData(scheme_code, start_date):
     '''
@@ -53,9 +67,43 @@ def getPercentChange(nav_series):
     '''
     return (nav_series - nav_series[0])/nav_series[0]
 
+def plotNav(plotCanvas, fundname, dateStart, dateEnd):
+    #print mf_tracker.df_portfolio
+    print fundname + "nav data loading..."
+    schemeCode = mf_tracker.df_portfolio[mf_tracker.df_portfolio["fundname"] == fundname]
+    schemeCode = str(int(schemeCode["code"]))
+
+    nav_df = getHistoryData(schemeCode)
+    nav_df = nav_df["nav"]
+    nav_df = nav_df[dateStart:dateEnd]
+    plotCanvas.axes.clear()
+    plotCanvas.plot(plotCanvas, nav_df)
+    plotCanvas.axes.autoscale()
+    print "plot finished..."
+    
+class NavCanvas(FigureCanvas):
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        #FigureCanvas.setSizePolicy(self,
+        #                           QtGui.QSizePolicy.Expanding,
+        #                           QtGui.QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+    def plot(self, plotCanvas, df_data):
+        df_data.plot(ax = plotCanvas.axes)
+        self.draw()
+        
+
+
+
 if __name__ == "__main__":
-    mf_df = getHistoryData(sys.argv[1])
+    nav_df = getHistoryData(sys.argv[1])
     start_date = '2016/8/24'
     pct_df = getNavCompareData(sys.argv[1], start_date)
-    mf = pd.concat([mf_df[start_date:], pct_df], axis=1)
+    mf = pd.concat([nav_df[start_date:], pct_df], axis=1)
     mf.to_csv(sys.argv[1]+".csv")
