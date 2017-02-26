@@ -6,6 +6,9 @@ import mf_tracker
 import nav
 import mf_nav_ui
 import mf_nav_gui
+import pyqtgraph as pg
+from plotUtils import DateAxisItem
+pg.setConfigOptions(antialias=True)
 
 TimeIntervalInYears = 1
 
@@ -15,15 +18,8 @@ class NAVWindow(QMainWindow, mf_nav_ui.Ui_MainWindow):
         self.setupUi(self)
         self.startDateEdit.setDate(QDate.currentDate().addYears(-1*TimeIntervalInYears))
         self.endDateEdit.setDate(QDate.currentDate())
-
-        self.navWidget = QWidget(self)
-        self.verticalLayout.addWidget(self.navWidget)
-        l = QVBoxLayout(self.navWidget)
-        self.navPlotCanvas = mf_nav_gui.NavCanvas(self.navWidget)
-        l.addWidget(self.navPlotCanvas)
         self.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"), self.mf_selected)
         self.connect(self.plotNavButton, SIGNAL("clicked()"), self.plotNavCallback)
-        
 
     def mf_selected(self, int):
         pass
@@ -33,4 +29,4 @@ class NAVWindow(QMainWindow, mf_nav_ui.Ui_MainWindow):
         qdateEnd = self.endDateEdit.date()
         dateStart = str(qdateStart.year())+"/"+str(qdateStart.month())+"/"+str(qdateStart.day())
         dateEnd = str(qdateEnd.year())+"/"+str(qdateEnd.month())+"/"+str(qdateEnd.day())
-        mf_nav_gui.plotNav(self.navPlotCanvas, self.comboBox.currentText(), dateStart, dateEnd)
+        mf_nav_gui.plotNav(self.comboBox.currentText(), dateStart, dateEnd)

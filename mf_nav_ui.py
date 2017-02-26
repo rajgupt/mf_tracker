@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\rajat\git\Python\mf_tracker\mf_tracker\mf_nav.ui'
+# Form implementation generated from reading ui file 'mf_nav.ui'
 #
-# Created: Sat Feb 25 22:03:45 2017
+# Created: Sun Feb 26 23:22:19 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(608, 389)
+        MainWindow.resize(608, 543)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
@@ -52,6 +52,9 @@ class Ui_MainWindow(object):
         self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
+        self.widget = QtGui.QWidget(self.centralwidget)
+        self.widget.setObjectName("widget")
+        self.verticalLayout.addWidget(self.widget)
         self.gridLayout.addLayout(self.verticalLayout, 4, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -71,7 +74,7 @@ class Ui_MainWindow(object):
         self.mfLabel.setText(QtGui.QApplication.translate("MainWindow", "Mutual Fund", None, QtGui.QApplication.UnicodeUTF8))
         self.startDateLabel.setText(QtGui.QApplication.translate("MainWindow", "End Date", None, QtGui.QApplication.UnicodeUTF8))
         self.endDateLabel.setText(QtGui.QApplication.translate("MainWindow", "Start Date", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("MainWindow", "<center>NAV Plot<center>", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MainWindow", "<html><head/><body><p align=\"center\">NAV Plot</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 
 
 if __name__ == "__main__":
